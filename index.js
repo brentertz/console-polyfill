@@ -13,7 +13,13 @@
      'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' +
      'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',');
   while (prop = properties.pop()) if (!con[prop]) con[prop] = empty;
-  while (method = methods.pop()) if (!con[method]) con[method] = dummy;
+  while (method = methods.pop()) {
+    if (!con[method]) {
+      con[method] = dummy;
+    } else if (Function.prototype.bind && typeof con[method] === 'object') {
+      con[method] = Function.prototype.bind.call(con[method], con);
+    }
+  }
 })(typeof window === 'undefined' ? this : window);
 // Using `this` for web workers while maintaining compatibility with browser
 // targeted script loaders such as Browserify or Webpack where the only way to
